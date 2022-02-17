@@ -41,10 +41,8 @@ net.Receive('shrek.morph', function(l)
     pl(ent, 'shrek_001')
 end)
 
-
-hook.Add( "PlayerFootstep", 'shrek_boi', function( ply, pos, foot, sound, volume, rf )
-    print('?')
-    if not SHREK_STATUS[ply] then return end
+hook.Add( "PlayerFootstep", 'testysex', function( ply, pos, foot, sound, volume, rf )
+    if not (SHREK_STATUS and SHREK_STATUS[ply]) then return end
     ply:EmitSound('garrysmod/data/' .. SHRSND['shrek_00' .. (foot + 1)])
 	return true
 end )
