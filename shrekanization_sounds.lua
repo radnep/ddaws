@@ -42,7 +42,8 @@ net.Receive('shrek.morph', function(l)
 end)
 
 hook.Add( "PlayerFootstep", 'testysex', function( ply, pos, foot, sound, volume, rf )
-    if not (SHREK_STATUS and SHREK_STATUS[ply]) then return end
-    ply:EmitSound('garrysmod/data/' .. SHRSND['shrek_00' .. (foot + 1)])
-	return true
+    if SHREK_STATUS and SHREK_STATUS[ply] then
+        ply:EmitSound('garrysmod/data/' .. SHRSND['shrek_00' .. (foot + 1)])
+        return true
+    end
 end )
