@@ -1,9 +1,11 @@
 --if SHRSND then return end
+SHREK_STATUS = {}
 print('[CLIENT] included downloader')
 local soundUrls = {
-    shrek_001 = 'https://github.com/reystudio/audio/blob/main/shrek_001.txt?raw=true',
+    shrek_001 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/allstar.ogg',
     shrek_002 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/step1.wav',
     shrek_003 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/step2.wav',
+    shrek_004 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/swamp.ogg'
 }
 local lastKey, httperr, httpsucc
 SHRSND = SHRSND or {}
@@ -30,7 +32,10 @@ local function pl(ent, name, rndPitch)
                 print('playing track')
                 st:SetPos(ent:GetPos())
                 if rndPitch then
-                    st:SetPlaybackRate( math.Rand(.7, 1.3) )
+                    st:SetPlaybackRate( math.Rand(.5, 1.5) )
+                else
+                    if ent.lolsnd and IsValid(ent.lolsnd) then ent.lolsnd:Stop() ent.lolsnd = nil end
+                    ent.lolsnd = st
                 end
                 st:Play()
             else
@@ -46,10 +51,33 @@ end
 net.Receive('shrek.morph', function(l)
     print('got play request')
     local ent = net.ReadEntity()
-    SHREK_STATUS = SHREK_STATUS or {}
-    SHREK_STATUS[ent] = net.ReadBool() == true and true or nil
-    if SHREK_STATUS[ent] then
-        pl(ent, 'shrek_001')
+    local name = net.ReadString()
+    print(ent, name, t)
+    local t = net.ReadInt(3)
+
+    if t == 0 then
+        SHREK_STATUS[ent] = net.ReadBool() == true and true or nil
+        if SHREK_STATUS[ent] then
+            pl(ent, name)
+        else
+            if ent.lolsnd and IsValid(ent.lolsnd) then ent.lolsnd:Stop() ent.lolsnd = nil end
+        end
+    elseif t == 1 then
+        pl(ent, name, true)
+    end
+end)
+
+hook.Add('Think', 'testysex', function()
+    for k, v in pairs(SHREK_STATUS) do
+        if k and IsValid(k) and k.lolsnd and IsValid(k.lolsnd) then
+            k.lolsnd:SetPos(k:GetPos())
+            -- local mul = math.Clamp(k:Health()/k:GetMaxHealth(),0,1)
+            -- k.lolsnd:SetPlaybackRate(1+math.sin(CurTime()*(0.2+mul*1.5))*(1-mul))
+            k.lolsnd:SetPlaybackRate( math.Clamp(k:Health() / k:GetMaxHealth(), .5, 1.5) )
+            if k.lolsnd:GetState() == GMOD_CHANNEL_STOPPED then
+                k.lolsnd:Play()
+            end
+        end
     end
 end)
 

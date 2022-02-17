@@ -1,4 +1,4 @@
-if shrekanization then return end
+--if shrekanization then return end
 
 shrekanization =
 {
@@ -78,6 +78,8 @@ util.AddNetworkString(netStr)
 function shrekanization.ForceSound(ent, isShrek)
     net.Start(netStr)
         net.WriteEntity(ent)
+        net.WriteString('shrek_001')
+        net.WriteInt(0, 3)
         net.WriteBool(isShrek == true)
     net.Broadcast()
 end
@@ -130,9 +132,31 @@ setmetatable(shrekanization, {
 
 hook.Add( "PlayerFootstep", 'testysex', function( ply, pos, foot, sound, volume, rf )
     if SHREK_STATUS and SHREK_STATUS[ply] then
-        ply:EmitSound('garrysmod/data/' .. SHRSND['shrek_00' .. (foot + 1)])
         return true
     end
 end )
 
-print('ok good')
+local lastThink = CurTime()
+hook.Add( 'Think', 'SexyToysAnalFisting', function()
+    -- if true then return end
+    if not shrekanization then return end
+    if lastThink + 1 > CurTime() then return end
+    lastThink = CurTime()
+    for k, v in pairs(shrekanization.memory) do
+        local ent = Player(k)
+        local rnd = math.random(0, 100) > 82
+        if rnd then
+            for _, anotherEnt in ipairs(player.GetAll()) do
+                if anotherEnt:GetPos():Distance(ent:GetPos()) < 1000 then
+                    net.Start(netStr)
+                        net.WriteEntity(ent)
+                        net.WriteString('shrek_004')
+                        net.WriteInt(1, 3)
+                    net.Broadcast()
+                    break
+                end
+            end
+        end
+    end
+
+end )
