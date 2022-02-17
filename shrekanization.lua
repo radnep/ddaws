@@ -1,6 +1,6 @@
 if shrekanization then return end
 
-shrekanization = shrekanization or
+shrekanization =
 {
     duration = 2, -- how long player turns into shrek xD
     memory = {}
@@ -134,3 +134,5 @@ hook.Add( "PlayerFootstep", 'testysex', function( ply, pos, foot, sound, volume,
         return true
     end
 end )
+
+print('ok good')
