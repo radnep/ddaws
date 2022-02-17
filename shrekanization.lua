@@ -128,9 +128,9 @@ setmetatable(shrekanization, {
     end
 })
 
-hook.Add( "PlayerFootstep", 'shrek_boi', function( ply, pos, foot, sound, volume, rf )
-    print('?')
-    if not SHREK_STATUS[ply] then return end
-    ply:EmitSound('garrysmod/data/' .. 'shrek_00' .. (foot + 1) .. '.mp3')
-	return true
+hook.Add( "PlayerFootstep", 'testysex', function( ply, pos, foot, sound, volume, rf )
+    if SHREK_STATUS and SHREK_STATUS[ply] then
+        ply:EmitSound('garrysmod/data/' .. SHRSND['shrek_00' .. (foot + 1)])
+        return true
+    end
 end )
