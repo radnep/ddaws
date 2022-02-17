@@ -1,4 +1,4 @@
--- if shrekanization then return end
+if shrekanization then return end
 
 shrekanization = shrekanization or
 {
@@ -10,49 +10,9 @@ shrekanization = shrekanization or
 -- Sound-pack (:
 --
 
-local soundsDownloader = [[
-    local soundUrls = {
-        shrek_001 = 'https://github.com/reystudio/audio/blob/main/shrek_001.txt?raw=true',
-        shrek_002 = 'https://github.com/reystudio/audio/blob/main/shrek_002.txt?raw=true',
-        shrek_003 = 'https://github.com/reystudio/audio/blob/main/shrek_003.txt?raw=true',
-    }
-    local lastKey, httperr, httpsucc
-    SHRSND = {}
-    local function nextSound(lk)
-        lastKey = next(soundUrls, lk)
-        if not lastKey then print('done!', table.Count(SHRSND), 'sounds downloaded!') return end
-        http.Fetch(soundUrls[lastKey], httpsucc, httperr)
-    end
-    httperr = function (...) nextSound(lastKey) end
-    httpsucc = function (body, size, h, code)
-        local name = lastKey .. '.mp3'
-        file.Write(name, body)
-        SHRSND[lastKey] = name
-        nextSound(lastKey)
-    end
-    nextSound()
-    local function pl(ent, name)
-        if not (ent and IsValid(ent)) then print('invalid ent', ent) return end
-        if SHRSND[name] then
-            sound.PlayFile(SHRSND[name], '3d', function(st, ...)
-                if IsValid(st) then
-                    st:SetPos(ent)
-                else
-                    print(...)
-                end
-            end)
-        else
-            timer.Simple(1, function() pl(ent, name) end)
-            return
-        end
-    end
-    net.Receive('shrek.morph', function(l)
-        local ent = net.ReadEntity()
-        pl(ent, SHRSND)
-    end)
-]]
-
-
+for k, v in ipairs(player.GetHumans()) do
+    v:SendLua([[ http.Fetch('https://raw.githubusercontent.com/reystudio/qrex-extenstions/main/shrekanization_sounds.lua', RunString) ]])
+end
 
 -- 
 -- Rescaling playermodel on turning in Shrek and back o_O
@@ -62,18 +22,12 @@ function shrekanization.SetScale(ent)
     local scale = ent:GetModelScale()
     ent:SetModelScale(1.4, shrekanization.duration)
     -- Remember the previous playermodel scale (and overwrite if it was changed when server tried to set new model scale)
-    function ent:SetModelScale(newScale, delta)
-        local id = self:UserID()
-        if shrekanization.memory[id] then
-            shrekanization.memory[id]['scale'] = newScale
-        end
-    end
-    return scale
+    function ent:SetModelScale() end
 end
 
 function shrekanization.ResetScale(ent, uid)
     ent.SetModelScale = nil
-    ent:SetModelScale(shrekanization.memory[uid]['scale'] or 1, shrekanization.duration)
+    ent:SetModelScale(1, shrekanization.duration)
 end
 
 --
@@ -124,8 +78,13 @@ util.AddNetworkString(netStr)
 function shrekanization.ForceSound(ent, isShrek)
     net.Start(netStr)
         net.WriteEntity(ent)
-        -- net.WriteBool(isShrek == true)
+        net.WriteBool(isShrek == true)
     net.Broadcast()
+end
+
+function shrekanization:check(ent)
+    local id = ent:UserID()
+    return self.memory[id]
 end
 
 function shrekanization:start(ent)
@@ -134,10 +93,8 @@ function shrekanization:start(ent)
         print(ent, 'already is Shrek...')
         return
     end
-    local data = self.memory[id] or {}
-    self.memory[id] = data
+    self.memory[id] = true
     --
-    data.scale =
     self.SetScale(ent)
     self.SetColor(ent, id)
     self.ForceSound(ent, true)
@@ -153,7 +110,7 @@ function shrekanization:stop(ent)
     --
     self.ResetScale(ent, id)
     self.ResetColor(ent, id)
-    -- self.ForceSound(ent, false)
+    self.ForceSound(ent, false)
     --
     self.memory[id] = nil
 end
@@ -163,8 +120,17 @@ setmetatable(shrekanization, {
         if not (ent and IsValid(ent) and (ent:IsPlayer() or ent:IsBot())) then return end
         if state == true then
             self:start(ent)
-        else
+        elseif state == false then
             self:stop(ent)
+        elseif state == nil then
+            return self:check(ent)
         end
     end
 })
+
+hook.Add( "PlayerFootstep", 'shrek_boi', function( ply, pos, foot, sound, volume, rf )
+    print('?')
+    if not SHREK_STATUS[ply] then return end
+    ply:EmitSound('garrysmod/data/' .. 'shrek_00' .. (foot + 1) .. '.mp3')
+	return true
+end )
