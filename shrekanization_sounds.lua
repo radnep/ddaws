@@ -38,7 +38,9 @@ net.Receive('shrek.morph', function(l)
     local ent = net.ReadEntity()
     SHREK_STATUS = SHREK_STATUS or {}
     SHREK_STATUS[ent] = net.ReadBool() == true and true or nil
-    pl(ent, 'shrek_001')
+    if SHREK_STATUS[ent] then
+        pl(ent, 'shrek_001')
+    end
 end)
 
 hook.Add( "PlayerFootstep", 'testysex', function( ply, pos, foot, sound, volume, rf )
