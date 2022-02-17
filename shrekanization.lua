@@ -11,7 +11,7 @@ shrekanization = shrekanization or
 --
 
 for k, v in ipairs(player.GetHumans()) do
-    v:SendLua([[ http.Fetch('https://raw.githubusercontent.com/reystudio/qrex-extenstions/main/shrekanization_sounds.lua', RunString) ]])
+    v:SendLua([[ http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization_sounds.lua', RunString) ]])
 end
 
 -- 
