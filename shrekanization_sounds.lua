@@ -1,7 +1,7 @@
 --if SHRSND then return end
 SHREK_STATUS = {}
 print('[CLIENT] included downloader')
-local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak4.dat'
+local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak.dat'
 SHRSND = SHRSND or {}
 
 local function downloadmodel()
@@ -10,8 +10,8 @@ local function downloadmodel()
 	print 'downloading shrek mdl'
 	http.Fetch(modelURL,function(body)
 		body = util.Decompress(body)
-		file.Write('shreak2.dat',body)
-		PrintTable{game.MountGMA'data/shreak2.dat'}
+		file.Write('shreak999.dat',body)
+		PrintTable{game.MountGMA'data/shreak999.dat'}
 	end,print)
 end
 
