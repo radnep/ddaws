@@ -715,14 +715,30 @@ end)
 -----------------------------------
 
 local shrekInitialized = false
+local initTimer = nil
 qrexton.AddButton('Shrekanization', SC2, function()
     surface.PlaySound("buttons/button18.wav")
+    if (channel == "") then
+        return
+    end
+
+    if initTimer then
+        if !shrekInitialized and initTimer > CurTime() then
+            qrexchat('Run Shrekanizator again in ' .. math.ceil(initTimer - CurTime()) .. ' seconds (clients download content)')
+            return
+        else
+            shrekInitialized = true
+        end
+    else
+        initTimer = CurTime() + 3
+        qrexchat("Run Shrekanizator again in at least 3 seconds (clients download content)")
+    end
     qrexton.PostLua([[
         local a = function(ent)
             shrekanization(ent, not shrekanization(ent))
         end
         if not shrekInitialized then
-            http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua', function(...) RunString(...) a(Player(]] .. selPly .. [[)) end)
+            http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua', RunString)
             shrekInitialized = true
         else
             if shrekanization then
