@@ -36,7 +36,7 @@ httpsucc = function (body, size, h, code)
 end
 nextSound()
 
-local function pl(ent, name, rndPitch)
+local function pl(ent, name, rndPitch, volume)
     if not (ent and IsValid(ent)) then print('invalid ent', ent) return end
     if SHRSND[name] then
         print('trying to play track...')
@@ -49,6 +49,9 @@ local function pl(ent, name, rndPitch)
                 else
                     if ent.lolsnd and IsValid(ent.lolsnd) then ent.lolsnd:Stop() ent.lolsnd = nil end
                     ent.lolsnd = st
+                end
+                if volume then
+                    st:SetVolume(volume)
                 end
                 st:Play()
             else
@@ -99,7 +102,7 @@ hook.Add('PlayerFootstep', 'testysex', function( ply, pos, foot, sound, volume, 
         --ply.stepCounter = ((ply.stepCounter or 0) + 1) % 2
         --if ply.stepCounter == 1 then
             ply.stepSound = ((ply.stepSound or 0) + 1) % 2
-            pl(ply, 'shrek_00' .. (ply.stepSound + 2), true)
+            pl(ply, 'shrek_00' .. (ply.stepSound + 2), true, 1.5)
         --end
         return true
     end
