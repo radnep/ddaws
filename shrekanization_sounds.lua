@@ -23,7 +23,7 @@ net.Receive('shrek.morph', function(l)
 	local t = net.ReadInt(3)
 
 	if name == 'shrek_004' then
-		ent:EmitSound('shrek/swamp.mp3',160,math.Rand(80,120),1,CHAN_VOICE,0)
+		ent:EmitSound('shrek/swamp.mp3',nil,math.Rand(80,120),1,CHAN_VOICE,0)
 	end
 	if name == 'shrek_001' then
 		local b = net.ReadBool()
@@ -70,7 +70,7 @@ hook.Add('PlayerFootstep', 'testysex', function( ply, pos, foot, sound, volume, 
 	if SHREK_STATUS and SHREK_STATUS[ply] then
 		ply.stepSound = ((ply.stepSound or 0) + 1) % 2
 
-		ply:EmitSound('shrek/step'..(ply.stepSound+1)..'.wav',160)
+		ply:EmitSound('shrek/step'..(ply.stepSound+1)..'.wav')
 		return true
 	end
 end)
