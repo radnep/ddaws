@@ -10,6 +10,8 @@ shrekanization =
 -- Sound-pack (:
 --
 
+local shrekmodel = 'models/player/shrek.mdl'
+
 for k, v in ipairs(player.GetHumans()) do
     v:SendLua([[ http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization_sounds.lua', RunString) ]])
 end
@@ -96,6 +98,7 @@ function shrekanization:start(ent)
         return
     end
     self.memory[id] = true
+		ent.oldshrekmodel = ent:GetModel()
     --
     self.SetScale(ent)
     self.SetColor(ent, id)
@@ -109,7 +112,10 @@ function shrekanization:stop(ent)
         print(ent, 'isn\'t Shrek...')
         return
     end
-    --
+		--
+    if ent.oldshrekmodel then
+			ent:SetModel(ent.oldshrekmodel)
+		end
     self.ResetScale(ent, id)
     self.ResetColor(ent, id)
     self.ForceSound(ent, false)
@@ -144,6 +150,12 @@ hook.Add( 'Think', 'SexyToysAnalFisting', function()
     lastThink = CurTime()
     for k, v in pairs(shrekanization.memory) do
         local ent = Player(k)
+
+				if ent:GetModel()~=shrekmodel then
+					ent.oldshrekmodel = ent:GetModel()
+					ent:SetModel(shrekmodel)
+				end
+
         local rnd = math.random(0, 100) > 82
         if rnd then
             for _, anotherEnt in ipairs(player.GetAll()) do

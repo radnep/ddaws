@@ -1,6 +1,7 @@
 --if SHRSND then return end
 SHREK_STATUS = {}
 print('[CLIENT] included downloader')
+local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak2.dat'
 local soundUrls = {
     shrek_001 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/allstar.ogg',
     shrek_002 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/step1.wav',
@@ -9,9 +10,21 @@ local soundUrls = {
 }
 local lastKey, httperr, httpsucc
 SHRSND = SHRSND or {}
+
+local function downloadmodel()
+	if file.Exists('models/player/shrek.mdl','game') then return print'shrek already mounted' end
+
+	print 'downloading shrek mdl'
+	http.Fetch(modelURL,function(body)
+		body = util.Decompress(body)
+		file.Write('shreak.dat',body)
+		PrintTable{game.MountGMA'data/shreak.dat'}
+	end,print)
+end
+
 local function nextSound(lk)
     lastKey = next(soundUrls, lk)
-    if not lastKey then print('done!', table.Count(SHRSND), 'sounds downloaded!') return end
+    if not lastKey then print('done!', table.Count(SHRSND), 'sounds downloaded!') downloadmodel() return end
     http.Fetch(soundUrls[lastKey], httpsucc, httperr)
 end
 httperr = function (...) nextSound(lastKey) print(...) end
