@@ -1,7 +1,7 @@
 --if SHRSND then return end
 SHREK_STATUS = {}
 print('[CLIENT] included downloader')
-local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak2.dat'
+local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak3.dat'
 local soundUrls = {
     shrek_001 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/allstar.ogg',
     shrek_002 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/step1.wav',
