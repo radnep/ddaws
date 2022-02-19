@@ -41,6 +41,7 @@ net.Receive('shrek.morph', function(l)
 					ent.shreksnd = c
 				end)
 			end
+			pl()
 		else
 			SHREK_STATUS[ent]=nil
 			if ent.shreksnd and ent.shreksnd:IsValid() then
@@ -66,9 +67,7 @@ hook.Add('Think', 'testysex', function()
 end)
 
 hook.Add('PlayerFootstep', 'testysex', function( ply, pos, foot, sound, volume, rf )
-	print(ply)
 	if SHREK_STATUS and SHREK_STATUS[ply] then
-		print(ply)
 		ply.stepSound = ((ply.stepSound or 0) + 1) % 2
 
 		ply:EmitSound('shrek/step'..(ply.stepSound+1)..'.wav',160)
