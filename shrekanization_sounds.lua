@@ -1,14 +1,7 @@
 --if SHRSND then return end
 SHREK_STATUS = {}
 print('[CLIENT] included downloader')
-local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak3.dat'
-local soundUrls = {
-	shrek_001 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/allstar.ogg',
-	shrek_002 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/step1.wav',
-	shrek_003 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/step2.wav',
-	shrek_004 = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/swamp.ogg'
-}
-local lastKey, httperr, httpsucc
+local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak4.dat'
 SHRSND = SHRSND or {}
 
 local function downloadmodel()
@@ -35,10 +28,18 @@ net.Receive('shrek.morph', function(l)
 	if name == 'shrek_001' then
 		local b = net.ReadBool()
 		if b then
-			sound.PlayFile('sound/shrek/allstar.ogg','3d mono noplay', function(c)
-				c:Play()
-				ent.shreksnd = c
-			end)
+			local retries = 5
+			local pl pl = function()
+				sound.PlayFile('sound/shrek/allstar.ogg','3d mono noplay', function(c)
+					if not c or not c:IsValid() and retries>0 then
+						retries = retries - 1
+						timer.Simple(1, pl)
+						return
+					end
+					c:Play()
+					ent.shreksnd = c
+				end)
+			end
 		else
 			if ent.shreksnd and ent.shreksnd:IsValid() then
 				ent.shreksnd:Stop()
