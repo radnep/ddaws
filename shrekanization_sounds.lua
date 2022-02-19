@@ -10,8 +10,8 @@ local function downloadmodel()
 	print 'downloading shrek mdl'
 	http.Fetch(modelURL,function(body)
 		body = util.Decompress(body)
-		file.Write('shreak.dat',body)
-		PrintTable{game.MountGMA'data/shreak.dat'}
+		file.Write('shreak2.dat',body)
+		PrintTable{game.MountGMA'data/shreak2.dat'}
 	end,print)
 end
 
@@ -28,6 +28,7 @@ net.Receive('shrek.morph', function(l)
 	if name == 'shrek_001' then
 		local b = net.ReadBool()
 		if b then
+			SHREK_STATUS[ent]=true
 			local retries = 5
 			local pl pl = function()
 				sound.PlayFile('sound/shrek/allstar.ogg','3d mono noplay', function(c)
@@ -41,6 +42,7 @@ net.Receive('shrek.morph', function(l)
 				end)
 			end
 		else
+			SHREK_STATUS[ent]=nil
 			if ent.shreksnd and ent.shreksnd:IsValid() then
 				ent.shreksnd:Stop()
 			end
