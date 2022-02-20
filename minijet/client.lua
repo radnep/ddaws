@@ -117,8 +117,44 @@ local function pilotcam( ply, pos, angles, fov )
 	return view
 end
 
+local fv = {
+	x = 10, y = 10, w = 250, h = 250
+}
+
+hook.Add('HUDPaint', 'mj.pilot', function()
+    local me = LocalPlayer()
+	if not (mj and mj.active and mj.active[me]) then return end
+	local jet = me.csJetMdl
+	local ang = jet:GetRenderAngles()
+	local f = jet:GetPos()
+	local t = f + ang:Right() * 120 + ang:Up() * 35 + ang:Forward() * -1
+	
+	surface.SetDrawColor(30, 30, 30, 255)
+	surface.DrawOutlinedRect(fv.x - 1, fv.y - 1, fv.w + 2, fv.h + 2)
+	
+	render.RenderView( {
+		origin = t,
+		angles = (f - t):Angle(),
+		x = fv.x, y = fv.y,
+		w = fv.w, h = fv.h,
+		fov = 45
+	} )
+	
+	local speed = math.floor(me:GetVelocity():Length() / 23.5)
+	local h = util.TraceLine({
+		start = me:GetPos(),
+		endpos = me:GetPos() + Vector(0, 0, -25000)
+	})
+	h = h.Hit and math.floor(h.HitPos:Distance(me:GetPos()) / 23.5) or '?'
+		
+	draw.SimpleText('Jet Speed: ' .. speed .. ' mph', 'ChatFont', fv.x + 2, fv.y + 2, color_white)
+	draw.SimpleText('Height: ' .. h .. ' m', 'ChatFont', fv.x + 2, fv.y + 2 + 15, color_white)
+	
+end)
+
 function mj:me(mode)
     -- pilot cam hud
+    
     hook[mode and 'Add' or 'Remove']('CalcView', 'mj.pcam', pilotcam)
     self[mode and 'on' or 'off'](self, LocalPlayer())
 end
