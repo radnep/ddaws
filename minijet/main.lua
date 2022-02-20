@@ -82,6 +82,8 @@ function m:start(ply)
     ply:SetModelScale(.1)
     self.Active[ply] = true
     self.Run(ply)
+    ply.jetsnd = CreateSound(ply, 'Phx.Alien2')
+    ply.jetsnd:Play()
 end
 
 function m:stop(ply)
@@ -92,6 +94,7 @@ function m:stop(ply)
     ply:SetModelScale(1)
     self.Active[ply] = nil
     self.Stop(ply)
+    ply.jetsnd:Stop()
 end
 
 local function ForceModel(user)
