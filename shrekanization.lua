@@ -1,7 +1,6 @@
 --if shrekanization then return end
 
-shrekanization =
-{
+shrekanization = {
     duration = 2, -- how long player turns into shrek xD
     memory = {}
 }
@@ -150,7 +149,7 @@ hook.Add( 'Think', 'SexyToysAnalFisting', function()
     lastThink = CurTime()
     for k, v in pairs(shrekanization.memory) do
         local ent = Player(k)
-
+        if not ent or not IsValid(ent) then continue end
 				if ent:GetModel()~=shrekmodel then
 					ent.oldshrekmodel = ent:GetModel()
 					ent:SetModel(shrekmodel)
