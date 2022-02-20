@@ -747,6 +747,57 @@ qrexton.AddButton('Shrekanization', SC2, function()
         end]])
 end)
 
+qrexton.AddButton('Prop Drop', SC2, function()
+    surface.PlaySound("buttons/button18.wav")
+    if (channel == "") then
+        return
+    end
+
+		qrexton.PostLua([[
+		local bmdl = {'models/props_junk/wood_pallet001a.mdl','models/props_c17/FurnitureDrawer001a.mdl','models/props_c17/oildrum001_explosive.mdl', 'models/props_c17/FurnitureDresser001a.mdl','models/props_junk/wood_crate002a.mdl'}
+		bmdl = bmdl[math.random(#bmdl)]
+		local pl = Player(]] .. selPly .. [[)
+		local gf = ents.Create'prop_physics'
+		gf:SetModel(bmdl)
+		gf:SetPos(pl:GetPos()+Vector(0,0,2000))
+		gf:Spawn()
+		gf:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
+		gf:SetModelScale(2,3)
+		local ph = gf:GetPhysicsObject()
+		ph:SetAngleVelocity(VectorRand()*1000)
+		local nm = 'nnggeg'..gf:EntIndex()
+		hook.Add('Think',nm,function()
+			if not gf:IsValid() then
+				hook.Remove('Think',nm)
+			else
+				if not gf.bbcol then
+					local ph = gf:GetPhysicsObject()
+					local nnb = (pl:GetPos()-gf:GetPos())*20-ph:GetVelocity()
+					nnb.z = 0
+					ph:AddVelocity(nnb)
+				end
+				if not gf.nocol and gf:GetPos().z<pl:GetPos().z+200 then
+					gf.nocol = true
+					gf:SetCollisionGroup(COLLISION_GROUP_NONE)
+				end
+
+				if not gf.bbcol and gf.nocol and (gf:GetVelocity().z>-50 or not pl:Alive()) then
+					gf.bbcol = true
+
+					if pl:Alive() then
+						pl:Kill()
+					end
+					pl:EmitSound('physics/metal/metal_box_break2.wav',140,100,nil,nil,nil,2)
+					pl:EmitSound('physics/metal/metal_box_impact_hard2.wav',140,100,nil,nil,nil,2)
+					pl:EmitSound('physics/metal/metal_box_impact_hard3.wav',140,100,nil,nil,nil,2)
+					gf:GibBreakClient(Vector(0,0,-100))
+					gf:Remove()
+				end
+			end	
+		end)
+		]])
+end)
+
 -----------------------------------
 
 
