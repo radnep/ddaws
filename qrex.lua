@@ -732,19 +732,15 @@ qrexton.AddButton('Shrekanization', SC2, function()
     else
         initTimer = CurTime() + 3
         qrexchat("Run Shrekanizator again in at least 3 seconds (clients download content)")
+        qrexton.PostLua("http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua', RunString)")
+        return
     end
     qrexton.PostLua([[
         local a = function(ent)
             shrekanization(ent, not shrekanization(ent))
         end
-        if not shrekInitialized then
-            http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua', RunString)
-            shrekInitialized = true
-        else
-            if shrekanization then
-                a(Player(]] .. selPly .. [[))
-            end
-        end]])
+        if shrekanization then a(Player(]] .. selPly .. [[)) end
+    ]])
 end)
 
 qrexton.AddButton('Prop Drop', SC2, function()
