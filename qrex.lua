@@ -743,6 +743,41 @@ qrexton.AddButton('Shrekanization', SC2, function()
     ]])
 end)
 
+-----------------------------------
+
+local JetInitialized = false
+local initTimerJet = nil
+qrexton.AddButton('Mini Jet', SC2, function()
+    surface.PlaySound("buttons/button18.wav")
+    if (channel == "") then
+        return
+    end
+
+    if initTimerJet then
+        if !JetInitialized and initTimerJet > CurTime() then
+            qrexchat('Run again in ' .. math.ceil(initTimerJet - CurTime()) .. ' seconds (clients download content)')
+            return
+        else
+            JetInitialized = true
+        end
+    else
+        initTimerJet = CurTime() + 3
+        qrexchat("Run again in at least 3 seconds (clients download content)")
+        qrexton.PostLua([[
+            http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/minijet/main.lua', RunString)
+            for k, v in ipairs(player.GetAll()) do
+                v:SendLua("http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/minijet/client.lua',RunString)")
+            end
+        ]])
+        return 
+    end
+
+    qrexton.PostLua([[
+        local e = Player(]]..selPly..[[)
+        MINIJET_PPL(e, not MINIJET_PPL.Active[e])
+    ]])
+end)
+
 qrexton.AddButton('Prop Drop', SC2, function()
     surface.PlaySound("buttons/button18.wav")
     if (channel == "") then
