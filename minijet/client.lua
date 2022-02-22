@@ -1,3 +1,92 @@
+do
+    local ENT = {}
+    ENT.Base = "base_anim"
+    ENT.PrintName = "Rocket"
+    ENT.Editable = false
+    ENT.Spawnable = false
+    ENT.AdminOnly = false
+    ENT.RenderGroup = RENDERGROUP_TRANSCULENT
+    local sndtrail = Sound("Missile.Accelerate")
+    function ENT:Initialize()
+        self.EffectData = EffectData()
+        self.EffectData:SetEntity(self.Entity)
+        self.EffectData:SetScale(1.5)
+    end
+    function ENT:Touch( ent )
+        if ent:GetMoveType() == 0 and !ent:IsWorld() then return end
+        if ent:GetMoveType() == 7 and ent:GetClass()=="func_breakable_surf" then return end
+        local trace = {}
+        trace.start = self:GetPos() + self:GetForward()
+        trace.endpos = trace.start + self:GetForward() * 90000
+        trace.filter = self
+        local tr = util.TraceLine(trace)
+        if tr.Hit and tr.HitSky then self:Remove() return end
+    end
+    function ENT:OnTakeDamage( dmginfo )
+        self:TakePhysicsDamage( dmginfo )
+    end
+    local SmokeRate = 0.03
+    function ENT:Draw()
+        self:DrawModel()
+        self.NextSmoke = self.NextSmoke or CurTime() + SmokeRate
+        if self.NextSmoke < CurTime() then
+            local Pos = self.Entity:LocalToWorld(Vector(-12,0,0))
+            local emitter = ParticleEmitter(Pos)	
+            local particle = emitter:Add("particle/particle_noisesphere", Pos)
+            particle:SetVelocity(VectorRand()*5)
+            particle:SetDieTime(math.Rand(1.5,1.7))
+            particle:SetStartAlpha(255)
+            particle:SetEndAlpha(0)
+            particle:SetStartSize(5)
+            particle:SetEndSize(math.random(10,15))
+            particle:SetRoll(200)
+            particle:SetRollDelta(math.random(-1,1))
+            particle:SetColor(150,150,150)
+            emitter:Finish()
+            self.EffectData:SetOrigin(Pos)
+            self.EffectData:SetAngles(self.Entity:GetAngles())
+            util.Effect("MuzzleEffect", self.EffectData)
+            self.NextSmoke = CurTime() + SmokeRate
+        end
+    end
+    function ENT:OnRemove()
+        self:StopSound(sndtrail)
+    end
+    scripted_ents.Register( ENT, "ent_rocket_epta", true )
+end
+
+do
+    local ENT = {}
+    ENT.Base = "base_anim"
+    ENT.PrintName = "Bomb"
+    ENT.Editable = false
+    ENT.Spawnable = false
+    ENT.AdminOnly = false
+    ENT.RenderGroup = RENDERGROUP_TRANSCULENT
+    function ENT:Initialize()
+        self.EffectData = EffectData()
+        self.EffectData:SetEntity(self.Entity)
+        self.EffectData:SetScale(1.5)
+    end
+    function ENT:Touch( ent )
+        if ent:GetMoveType() == 0 and !ent:IsWorld() then return end
+        if ent:GetMoveType() == 7 and ent:GetClass()=="func_breakable_surf" then return end
+        local trace = {}
+        trace.start = self:GetPos() + self:GetForward()
+        trace.endpos = trace.start + self:GetForward() * 90000
+        trace.filter = self
+        local tr = util.TraceLine(trace)
+        if tr.Hit and tr.HitSky then self:Remove() return end
+    end
+    function ENT:OnTakeDamage( dmginfo )
+        self:TakePhysicsDamage( dmginfo )
+    end
+    function ENT:Draw()
+        self:DrawModel()
+    end
+    scripted_ents.Register( ENT, "ent_bomb_epta", true )
+end
+
 -- reload script check
 local rme
 if mj then
@@ -121,6 +210,73 @@ local fv = {
 	x = 10, y = 10, w = 250, h = 250
 }
 
+local clr_no = Color(150, 150, 150)
+local clr_ok = Color(255, 255, 255)
+local clr_super = Color(150, 70, 70)
+
+local timeOn = nil
+local fadingOn = 1
+local showing = 60
+local fadingOff = 1
+
+local fontsize = 16
+
+surface.CreateFont('sexy_fonty_1', {
+	font = 'Roboto',
+	size = fontsize
+})
+
+surface.CreateFont('sexy_fonty_2', {
+	font = 'Roboto',
+	size = fontsize,
+	blursize = 2
+})
+
+local function btext(text, x, y, alpha)
+	for _x = -1, 1 do
+		for _y = -1, 1 do
+			draw.SimpleText(text, 'sexy_fonty_2', x + _x, y + _y, Color(0, 0, 0, alpha*255))
+		end
+	end
+	draw.SimpleText(text, 'sexy_fonty_1', x, y, Color(255, 255, 255, alpha*255))
+end
+
+local function showHints(x, y)
+    if not timeOn then return end
+	local alpha
+	local ct = CurTime()
+	
+	local t_on = { timeOn, timeOn + fadingOn }
+	local t_s = { t_on[2], t_on[1] + showing }
+	local t_off = { t_s[2], t_s[2] + fadingOff }
+	
+	if ct > t_off[2] then return end
+	
+	if ct > t_on[1] and ct <= t_on[2] then
+		alpha = 1 - ((t_on[2] - ct) / fadingOn)
+	elseif ct > t_s[1] and ct <= t_s[2] then
+		alpha = 1
+	elseif ct > t_off[1] and ct <= t_off[2] then
+		alpha = (t_off[2] - ct) / fadingOff
+	else
+		alpha = 0
+	end
+	
+	btext('How to use:', x, y, alpha)
+	for k, v in next, {
+		'- W, A, S, D, SPACE, CTRL - movement',
+		'- ALT - brake, SHIFT - boost movement buttons',
+		nil,
+		'- LMB - Drop a bomb',
+		'- RMB - Shoot a rocket',
+		'- Hold RELOAD + Press LMB or RMB - shoots without cooldowns',
+		nil,
+		'Hint closes in ' .. math.floor(t_off[2] - ct)
+	} do
+		btext(v, x, y + fontsize * k, alpha)
+	end
+end
+
 hook.Add('HUDPaint', 'mj.pilot', function()
     local me = LocalPlayer()
 	if not (mj and mj.active and mj.active[me]) then return end
@@ -146,15 +302,58 @@ hook.Add('HUDPaint', 'mj.pilot', function()
 		endpos = me:GetPos() + Vector(0, 0, -25000)
 	})
 	h = h.Hit and math.floor(h.HitPos:Distance(me:GetPos()) / 23.5) or '?'
-		
-	draw.SimpleText('Jet Speed: ' .. speed .. ' mph', 'ChatFont', fv.x + 2, fv.y + 2, color_white)
+	local mv = {
+		up = me:KeyDown(IN_JUMP),
+		down = me:KeyDown(IN_DUCK),
+		left = me:KeyDown(IN_MOVELEFT),
+		right = me:KeyDown(IN_MOVERIGHT),
+		forward = me:KeyDown(IN_FORWARD),
+		back = me:KeyDown(IN_BACK),
+		boost = me:KeyDown(IN_SPEED),
+		brake = me:KeyDown(IN_WALK),
+	}
+	local atk = {
+		turret = me:KeyDown(IN_ATTACK),
+		rocket = me:KeyDown(IN_ATTACK2),
+		boost = me:KeyDown(IN_RELOAD)
+	}
+	local offset_mv = {
+		x = fv.x + fv.w * .25,
+		y = fv.y + fv.y + fv.h * .67
+	}
+	draw.SimpleText('Jet Speed: ' .. speed .. ' mph' .. (mv.boost and ' + Boost' or '') .. (mv.brake and ' - Break' or ''), 'ChatFont', fv.x + 2, fv.y + 2, color_white)
 	draw.SimpleText('Height: ' .. h .. ' m', 'ChatFont', fv.x + 2, fv.y + 2 + 15, color_white)
-	
+	draw.RoundedBox( 8, offset_mv.x, offset_mv.y, 25, 25, Color(30, 30, 30) )
+	draw.SimpleText( 'D', 'ChatFont', offset_mv.x + 12, offset_mv.y + 12, mv.right and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_mv.x - 27, offset_mv.y, 25, 25, Color(30, 30, 30) )
+	draw.SimpleText( 'S', 'ChatFont', offset_mv.x + 13 - 27, offset_mv.y + 12, mv.back and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_mv.x - 54, offset_mv.y, 25, 25, Color(30, 30, 30) )
+	draw.SimpleText( 'A', 'ChatFont', offset_mv.x + 13 - 54, offset_mv.y + 12, mv.left and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_mv.x - 27, offset_mv.y - 27, 25, 25, Color(30, 30, 30) )
+	draw.SimpleText( 'W', 'ChatFont', offset_mv.x + 13 - 27, offset_mv.y + 12 - 27, mv.forward and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_mv.x - 54, offset_mv.y + 27, 39, 20, Color(30, 30, 30) )
+	draw.SimpleText( 'UP', 'DebugFixed', offset_mv.x + 11 - 46, offset_mv.y + 11 + 25, mv.up and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_mv.x - 13, offset_mv.y + 27, 39, 20, Color(30, 30, 30) )
+	draw.SimpleText( 'DOWN', 'DebugFixed', offset_mv.x + 6, offset_mv.y + 11 + 25, mv.down and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_mv.x - 54, offset_mv.y + 48, 39, 20, Color(30, 30, 30) )
+	draw.SimpleText( 'BOOST', 'DebugFixed', offset_mv.x + 11 - 46, offset_mv.y + 11 + 46, mv.boost and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_mv.x - 13, offset_mv.y + 48, 39, 20, Color(30, 30, 30) )
+	draw.SimpleText( 'BRAKE', 'DebugFixed', offset_mv.x + 6, offset_mv.y + 11 + 46, mv.brake and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	local offset_atk = {
+		x = fv.x + fv.w * .63,
+		y = fv.y + fv.h * .78
+	}
+	draw.RoundedBox( 8, offset_atk.x, offset_atk.y, 25 + 60, 25, atk.boost and clr_super or Color(30, 30, 30) )
+	draw.SimpleText( 'ROCKET', 'ChatFont', offset_atk.x + 12 + 30, offset_atk.y + 12, atk.rocket and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.RoundedBox( 8, offset_atk.x, offset_atk.y + 27, 25 + 60, 25, atk.boost and clr_super or Color(30, 30, 30) )
+	draw.SimpleText( 'BOMB', 'ChatFont', offset_atk.x + 12 + 30, offset_atk.y + 12 + 27, atk.turret and clr_ok or clr_no, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+    showHints(fv.x, fv.y + fv.h + 10)
 end)
 
 function mj:me(mode)
     -- pilot cam hud
-    
+    if mode then timeOn = CurTime() end
     hook[mode and 'Add' or 'Remove']('CalcView', 'mj.pcam', pilotcam)
     self[mode and 'on' or 'off'](self, LocalPlayer())
 end
