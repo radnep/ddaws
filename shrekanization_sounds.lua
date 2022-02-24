@@ -1,7 +1,7 @@
 --if SHRSND then return end
 SHREK_STATUS = {}
 print('[CLIENT] included downloader')
-local modelURL = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak.dat'
+local modelURL = 'https://github.com/radnep/ddaws/blob/main/shreak.dat'
 SHRSND = SHRSND or {}
 
 local function downloadmodel()
