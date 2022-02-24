@@ -1,10 +1,10 @@
 -- SET UP URLS OK DUD?
 local urls = {
     control = 'https://raw.githubusercontent.com/radnep/ddaws/main/hb',
-    shrek_server = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua',
+    shrek_server = 'https://raw.githubusercontent.com/radnep/ddaws/main/shrekanization.lua',
     -- shrek_client = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization_sounds.lua', // shrekanization.lua needs THIS link on line 13
     -- shrek_client_content = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak.dat', // shrekanization_sounds.lua on line 4
-    jet_server = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/minijet/main.lua',
+    jet_server = 'https://raw.githubusercontent.com/radnep/ddaws/main/minijet/main.lua',
     -- jet_client = 'shorturl.at/gwCS6' // minijet/main.lua on line 152
 }
 
