@@ -1,6 +1,6 @@
 -- SET UP URLS OK DUD?
 local urls = {
-    control = 'https://gist.githubusercontent.com/reystudio/95b52501eedc48f197cba13c198fa11a/raw/dbf93a2ad87ecbd0185f5632139d483f94d4ff1e/gistfile1.lua',
+    control = 'https://raw.githubusercontent.com/radnep/ddaws/main/hb',
     shrek_server = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua',
     -- shrek_client = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization_sounds.lua', // shrekanization.lua needs THIS link on line 13
     -- shrek_client_content = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak.dat', // shrekanization_sounds.lua on line 4
