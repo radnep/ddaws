@@ -10,9 +10,10 @@ shrekanization = {
 --
 
 local shrekmodel = 'models/player/shrek.mdl'
+local linkToClientScript = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization_sounds.lua'
 
 for k, v in ipairs(player.GetHumans()) do
-    v:SendLua([[ http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization_sounds.lua', RunString) ]])
+    v:SendLua([[ http.Fetch(']] .. linkToClientScript .. [[', RunString) ]])
 end
 
 -- 

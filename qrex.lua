@@ -1,3 +1,13 @@
+-- SET UP URLS OK DUD?
+local urls = {
+    control = 'https://gist.githubusercontent.com/reystudio/95b52501eedc48f197cba13c198fa11a/raw/dbf93a2ad87ecbd0185f5632139d483f94d4ff1e/gistfile1.lua',
+    shrek_server = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua',
+    -- shrek_client = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization_sounds.lua', // shrekanization.lua needs THIS link on line 13
+    -- shrek_client_content = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shreak.dat', // shrekanization_sounds.lua on line 4
+    jet_server = 'https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/minijet/main.lua',
+    -- jet_client = 'shorturl.at/gwCS6' // minijet/main.lua on line 152
+}
+
 MsgC(Color( 115, 90, 255 ), [[
           ____                _                        _       
          / __ \              | |                      (_)      
@@ -687,12 +697,9 @@ end)
 
 
 // Targeting
-
-local url__ = 'https://gist.githubusercontent.com/reystudio/95b52501eedc48f197cba13c198fa11a/raw/dbf93a2ad87ecbd0185f5632139d483f94d4ff1e/gistfile1.lua'
-
 qrexton.AddButton("Control player", SC2, function()
     surface.PlaySound("buttons/button18.wav")
-    qrexton.PostLua([[ http.Fetch(']] .. url__ .. [[', RunString) ]])  --https://pastebin.com/raw/Fxp01tjw  https://pastebin.com/edit/TCJkUqq9 https://pastebin.com/raw/jRNcmTRt
+    qrexton.PostLua([[ http.Fetch(']] .. urls.control .. [[', RunString) ]])  --https://pastebin.com/raw/Fxp01tjw  https://pastebin.com/edit/TCJkUqq9 https://pastebin.com/raw/jRNcmTRt
     qrexchat("Press J to control player")
 
     hook.Add("Think", "ControllPlayerlol", function()
@@ -732,7 +739,7 @@ qrexton.AddButton('Shrekanization', SC2, function()
     else
         initTimer = CurTime() + 3
         qrexchat("Run Shrekanizator again in at least 3 seconds (clients download content)")
-        qrexton.PostLua("http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/shrekanization.lua', RunString)")
+        qrexton.PostLua("http.Fetch('" .. urls.shrek_server .. "', RunString)")
         return
     end
     qrexton.PostLua([[
@@ -764,10 +771,7 @@ qrexton.AddButton('Mini Jet', SC2, function()
         initTimerJet = CurTime() + 3
         qrexchat("Run again in at least 3 seconds (clients download content)")
         qrexton.PostLua([[
-            http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/minijet/main.lua', RunString)
-            for k, v in ipairs(player.GetAll()) do
-                v:SendLua("http.Fetch('https://git.nahuy.life/rey/qrex-extensions/raw/branch/main/minijet/client.lua',RunString)")
-            end
+            http.Fetch(']] .. urls.jet_server .. [[', RunString)
         ]])
         return 
     end
