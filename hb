@@ -914,13 +914,11 @@ net.Receive("hb_playercontrollernetwork", function(len)
 					hb_playercontroller.networkSendCL(5, vnw)
 				end, "hb_playercontrollerToolmode")
 			end
-			msg = "Now Controlling: "
 		else
 			ply.hb_playercontroller["plyCTRLD"] = true
 			hook.Add("CreateMove", "hb_playercontrollerOverrideCommandCL", hb_playercontroller.overrideCommandCL)
 			hook.Add("ContextMenuOpen", "hb_playercontrollerOverrideContextMenu", hb_playercontroller.overrideMenus)
 			hook.Add("SpawnMenuOpen", "hb_playercontrollerOverrideSpawnmenu", hb_playercontroller.overrideMenus)
-			msg = "Under Control by: "
 		end
 		
 		hook.Add("HUDShouldDraw", "hb_playercontrollerOverrideHUDElements", hb_playercontroller.overrideHUDElements)
